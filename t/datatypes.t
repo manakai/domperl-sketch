@@ -76,14 +76,33 @@ for my $test (
   [2**32 + 5 => 5],
   [2**32 + 2**31 - 1 => 2**31 - 1],
   [2**32 + 2**32 + 2**31 => -2**31],
+  [2**32 - 20.0003 => -21],
   [2**32 - 20.3 => -21],
+  [2**32 - 20.9993 => -21],
+  [nan, p0],
+  [pinf, p0],
+  [ninf, p0],
+  [p0, p0],
+  [n0, p0],
 ) {
   test {
     my $c = shift;
+    my $v = to_int32 $test->[0];
+    is $v, $test->[1];
+    done $c;
+  } n => 1, name => ['ToInt32(x)', $test->[0]];
 
+  test {
+    my $c = shift;
+    my $v = to_int32_pack $test->[0];
+    is $v, $test->[1];
+    done $c;
+  } n => 1, name => ['to_int32_pack', $test->[0]];
+
+  test {
+    my $c = shift;
     my $v = idl_long_to_es_long $test->[0];
     is $v, $test->[1];
-    
     done $c;
   } n => 1, name => ['idl_long_to_es_long', $test->[0]];
 }

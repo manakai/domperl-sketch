@@ -58,6 +58,10 @@ sub to_int32 ($) {
   }
 } # to_int32
 
+sub to_int32_pack ($) {
+  return unpack 'l', pack 'L', $_[0] % 2**32;
+} # to_int32_pack
+
 sub idl_long_to_es_long ($) {
   ## WebIDL <http://dev.w3.org/2006/webapi/WebIDL/#es-long>
 

@@ -32,6 +32,78 @@ sub floor ($) {
   }
 } # floor
 
+sub to_int16_pack ($) {
+  return unpack 's', pack 'S', $_[0] % 2**16;
+} # to_int16_pack
+
+sub es_to_idl_short ($) {
+  ## WebIDL <http://dev.w3.org/2006/webapi/WebIDL/#es-short>
+
+  # 1.
+  my $x = to_number $_[0];
+
+  # XXX 2.-3.
+
+  # 4.
+  if (is_nan $x or is_p0 $x or is_n0 $x or is_pinf $x or is_ninf $x) {
+    return p0;
+  }
+
+  # 3.
+  $x = (sign $x) * floor abs $x;
+
+  # 4.
+  $x = $x % 2**16;
+
+  # 5.
+  if ($x >= 2**15) {
+    return $x - 2**16;
+  } else {
+    return $x;
+  }
+} # es_to_idl_short
+
+sub to_uint16 ($) {
+  ## ES5 <http://es5.github.com/#x9.7>
+
+  # 1.
+  my $number = to_number $_[0];
+
+  # 2.
+  if (is_nan $number or is_p0 $number or is_n0 $number or
+      is_pinf $number or is_ninf $number) {
+    return p0;
+  }
+
+  # 3.
+  my $pos_int = (sign $number) * floor abs $number;
+
+  # 4.
+  my $int16bit = $pos_int % 2**16;
+
+  # 5.
+  return $int16bit;
+} # to_uint16
+
+sub to_uint16_pack ($) {
+  return unpack 'S', pack 'S', $_[0] % 2**32;
+} # to_uint16_pack
+
+sub es_to_idl_unsigned_short ($) {
+  ## WebIDL <http://dev.w3.org/2006/webapi/WebIDL/#es-unsigned-short>
+
+  # 1.
+  my $x = to_number $_[0];
+
+  # XXX
+
+  # 4.
+  $x = to_uint16 $x;
+
+  # 5.
+  return $x;
+} # es_to_idl_unsigned_short
+
 sub to_int32 ($) {
   ## ES5 <http://es5.github.com/#x9.5>
 
@@ -62,7 +134,7 @@ sub to_int32_pack ($) {
   return unpack 'l', pack 'L', $_[0] % 2**32;
 } # to_int32_pack
 
-sub idl_long_to_es_long ($) {
+sub es_to_idl_long ($) {
   ## WebIDL <http://dev.w3.org/2006/webapi/WebIDL/#es-long>
 
   # 1.
@@ -75,6 +147,47 @@ sub idl_long_to_es_long ($) {
 
   # 5.
   return $x;
-} # idl_long_to_es_long
+} # es_to_idl_long
+
+sub to_uint32 ($) {
+  ## ES5 <http://es5.github.com/#x9.6>
+
+  # 1.
+  my $number = to_number $_[0];
+
+  # 2.
+  if (is_nan $number or is_p0 $number or is_n0 $number or
+      is_pinf $number or is_ninf $number) {
+    return p0;
+  }
+
+  # 3.
+  my $pos_int = (sign $number) * floor abs $number;
+
+  # 4.
+  my $int32bit = $pos_int % 2**32;
+
+  # 5.
+  return $int32bit;
+} # to_uint32
+
+sub to_uint32_pack ($) {
+  return unpack 'L', pack 'L', $_[0] % 2**32;
+} # to_uint32_pack
+
+sub es_to_idl_unsigned_long ($) {
+  ## WebIDL <http://dev.w3.org/2006/webapi/WebIDL/#es-unsigned-long>
+
+  # 1.
+  my $x = to_number $_[0];
+
+  # XXX
+
+  # 4.
+  $x = to_uint32 $x;
+
+  # 5.
+  return $x;
+} # es_to_idl_unsigned_long
 
 1;
